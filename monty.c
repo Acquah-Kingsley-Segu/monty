@@ -17,18 +17,23 @@ int main(int argc, char **argv)
 	int line_num = 0;
 	char *token;
 	char str[10];
-	int i, data = 0;
+	int i, error = 1, data = 0;
 
 	top->next = NULL;
 	top->prev = NULL;
 	if (argc < 2)
 	{
-		printf("A bytecode file must be passed.\n");
+		fwrite("USAGE: monty file\n", 1, 18, stderr);
 		exit(EXIT_FAILURE);
 	}
 	f_ptr = fopen(argv[1], "r");
 	if (f_ptr == NULL)
-		printf("%s can't be opened.\n", argv[1]);
+	{
+		fwrite("Error: Can't open file ", 1, 24, stderr);
+		fwrite(argv[1], 1, strlen(argv[1]), stderr);
+		fwrite("\n", 1, 1, stderr);
+		exit(EXIT_FAILURE);
+	}
 	while (fgets(str, 50, f_ptr) != NULL)
 	{
 		line_num++;
@@ -53,7 +58,16 @@ int main(int argc, char **argv)
 				{
 					operations[i].f(&top, line_num);
 				}
+				error = 0;
 			}
+		}
+		if (error)
+		{
+			fwrite("L", 1, 1, stderr);
+			fwrite(":unknown instruction ", 1, 21, stderr);
+			fwrite(token, 1, strlen(token), stderr);
+			fwrite("\n", 1, 1, stderr);
+			exit(EXIT_FAILURE);
 		}
 	}
 	fclose(f_ptr);
