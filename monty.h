@@ -12,8 +12,8 @@
 typedef struct doubly_list
 {
 	int data;
-	struct doubly_list* prev;
-	struct doubly_list* next;	
+	struct doubly_list *prev;
+	struct doubly_list *next;
 } list;
 
 /**
@@ -49,6 +49,6 @@ extern void rotr(list **top, unsigned int);
 
 /* List of opcodes and their respective functions */
 
-extern inst operations[2]; /* Opcode --> function */
+extern inst operations[16]; /* Opcode --> function */
 extern int error_status; /* To check if an error took place */
 #endif

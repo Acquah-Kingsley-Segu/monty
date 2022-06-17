@@ -39,8 +39,11 @@ void pall(list **top, unsigned int line_num)
 {
         list *trav = malloc(sizeof(list));
 
-        if (top == NULL || *top == NULL)
-                return;
+        if (top == NULL)
+	{
+		printf("L%d: usage: pass a top pointer\n", line_num / 10);
+                exit(EXIT_FAILURE);
+	}
         if (trav == NULL)
                 return;
         trav = *top;
@@ -59,7 +62,10 @@ void pall(list **top, unsigned int line_num)
 void pint(list **top, unsigned int line_num)
 {
 	if (top == NULL || *top == NULL)
+	{
+		printf("L%u: can't pint, stack is empty\n", (line_num / 10));
 		exit(EXIT_FAILURE);
+	}
 	printf("%d\n", (*top)->data);
 }
 
@@ -72,7 +78,10 @@ void pop(list **top, unsigned int line_num)
 {
 	list *trav;
 	if (top == NULL || *top == NULL)
+	{
+		printf("L%u: can't pop an empty stack\n", (line_num / 10));
 		exit(EXIT_FAILURE);
+	}
 	trav = *top;
 	*top = (*top)->prev;
 	free(trav);
@@ -85,10 +94,22 @@ void pop(list **top, unsigned int line_num)
  */
 void swap(list **top, unsigned int line_num)
 {
-	int temp;
+	list *trav;
+	int temp = 0;
 
 	if (top == NULL || *top == NULL)
 		exit(EXIT_FAILURE);
+	trav = *top;
+	while (trav != NULL)
+	{
+		temp++;
+		trav = trav->prev;
+	}
+	if (temp < 2)
+	{
+		printf("L%u: can't swap, stack too short\n", (line_num / 10));
+		exit(EXIT_FAILURE);
+	}
 	temp = (*top)->data;
 	(*top)->data = (*top)->prev->data;
 	(*top)->prev->data = temp; 
@@ -101,8 +122,22 @@ void swap(list **top, unsigned int line_num)
  */
 void add(list **top, unsigned int line_num)
 {
+	list *trav;
+	int size = 0;
+
 	if (top == NULL || *top == NULL)
 		exit(EXIT_FAILURE);
+	trav = *top;
+	while (trav != NULL)
+	{
+		size++;
+		trav = trav->prev;
+	}
+	if (size < 2)
+	{
+		printf("L%u: can't add, stack too short\n", (line_num / 10));
+		exit(EXIT_FAILURE);
+	}
 	(*top)->prev->data = (*top)->prev->data + (*top)->data;
 	pop(&(*top), 1);
 }
@@ -114,7 +149,9 @@ void add(list **top, unsigned int line_num)
  */
 void nop(list **top, unsigned int line_num)
 {
-	exit(EXIT_SUCCESS);
+	if (top == NULL)
+		exit(EXIT_FAILURE);
+	exit((line_num - line_num + 1));
 }
 
 /**
@@ -124,8 +161,22 @@ void nop(list **top, unsigned int line_num)
  */
 void sub(list **top, unsigned int line_num)
 {
+	list *trav;
+	int size = 0;
+
 	if (top == NULL || *top == NULL)
 		exit(EXIT_FAILURE);
+	trav = *top;
+	while (trav != NULL)
+	{
+		size++;
+		trav = trav->prev;
+	}
+	if (size < 2)
+	{
+		printf("L%u: can't sub, stack too short\n", (line_num / 10));
+		exit(EXIT_FAILURE);
+	}
 	(*top)->prev->data -= (*top)->data;
 	pop(&(*top), 1);
 }
@@ -137,8 +188,27 @@ void sub(list **top, unsigned int line_num)
  */
 void _div(list **top, unsigned int line_num)
 {
+	list *trav;
+	int size = 0;
+
 	if (top == NULL || *top == NULL)
 		exit(EXIT_FAILURE);
+	trav = *top;
+	while (trav != NULL)
+	{
+		size++;
+		trav = trav->prev;
+	}
+	if (size < 2)
+	{
+		printf("L%u: can't div, stack too short\n", (line_num / 10));
+		exit(EXIT_FAILURE);
+	}
+	if ((*top)->data == 0)
+	{
+		printf("L%u: division by zero", (line_num / 10));
+		exit(EXIT_FAILURE);
+	}
 	(*top)->prev->data /= (*top)->data;
 	pop(&(*top), 1);
 }
@@ -150,8 +220,22 @@ void _div(list **top, unsigned int line_num)
  */
 void _mul(list **top, unsigned int line_num)
 {
+	list *trav;
+	int size = 0;
+
 	if (top == NULL || *top == NULL)
 		exit(EXIT_FAILURE);
+	trav = *top;
+	while (trav != NULL)
+	{
+		size++;
+		trav = trav->prev;
+	}
+	if (size < 2)
+	{
+		printf("L%u: can't mul, stack too short\n", (line_num / 10));
+		exit(EXIT_FAILURE);
+	}
 	(*top)->prev->data *= (*top)->data;
 	pop(&(*top), 1);
 }
@@ -163,8 +247,27 @@ void _mul(list **top, unsigned int line_num)
  */
 void mod(list **top, unsigned int line_num)
 {
+	list *trav;
+	int size = 0;
+
 	if (top == NULL || *top == NULL)
 		exit(EXIT_FAILURE);
+	trav = *top;
+	while (trav != NULL)
+	{
+		size++;
+		trav = trav->prev;
+	}
+	if (size < 2)
+	{
+		printf("L%u: can't mod, stack too short\n", (line_num / 10));
+		exit(EXIT_FAILURE);
+	}
+	if ((*top)->data == 0)
+	{
+		printf("L%u: division by zero", (line_num / 10));
+		exit(EXIT_FAILURE);
+	}
 	(*top)->prev->data %= (*top)->data;
 	pop(&(*top), 1);
 }
@@ -177,7 +280,15 @@ void mod(list **top, unsigned int line_num)
 void pchar(list **top, unsigned int line_num)
 {
 	if (top == NULL || *top == NULL)
+	{
+		printf("L%u: can't pchar, stack empty\n", (line_num / 10));
 		exit(EXIT_FAILURE);
+	}
+	if ((*top)->data < 0 || (*top)->data > 127)
+	{
+		printf("L%u: can't pchar, value out of range\n", (line_num / 10));
+		exit(EXIT_FAILURE);
+	}
 	fputc((*top)->data, stdout);
 	fputc('\n', stdout);
 }
@@ -198,7 +309,10 @@ void pstr(list **top, unsigned int line_num)
 	while (trav != NULL)
 	{
 		if (trav->data == 0 || trav->data > 127)
-			break;
+		{
+			printf("L%u: can't pstr, value out of range\n", (line_num / 10));
+			exit(EXIT_FAILURE);
+		}
 		fputc(trav->data, stdout);
 		trav = trav->prev;
 	}
@@ -214,6 +328,11 @@ void rotl(list **top, unsigned int line_num)
 	list *trav = *top;
 	int temp = (*top)->data;
 
+	if (top == NULL || *top == NULL)
+	{
+		printf("L%u: can't rotl, stack empty\n", (line_num / 10));
+		exit(EXIT_FAILURE);
+	}
 	while (trav->prev != NULL)
 	{
 		trav->data = (trav->prev)->data;
@@ -232,6 +351,11 @@ void rotr(list **top, unsigned int line_num)
 	list *trav = *top;
 	int temp;
 
+	if (top == NULL || *top == NULL)
+	{
+		printf("L%u: can't rotr, stack empty\n", (line_num / 10));
+		exit(EXIT_FAILURE);
+	}
 	while (trav->prev != NULL)
 		trav = trav->prev;
 	temp = trav->next->data;
