@@ -20,5 +20,5 @@ inst operations[16] = {
 			{"rotr", &rotr}
 		     };
 
-char *token = " ";
 int error_status = 0;
+int data = 0;

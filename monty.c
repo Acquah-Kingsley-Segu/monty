@@ -17,7 +17,7 @@ int main(int argc, char **argv)
 	int line_num = 0;
 	char *token;
 	char str[10];
-	int i, error = 1, data = 0;
+	int i, error = 1, op_len;
 
 	top->next = NULL;
 	top->prev = NULL;
@@ -38,21 +38,24 @@ int main(int argc, char **argv)
 	{
 		line_num++;
 		token = strtok(str, " ");
-		/*op_len = strlen(token);*/
+		if (strchr(token, '\n'))
+			op_len = strlen(token) - 1;
+		else
+			op_len = strlen(token);
 		for (i = 0; i < 16; i++)
 		{
-			if (!strncmp(str, operations[i].opcode, 4))
+			if (!strncmp(str, operations[i].opcode, op_len))
 			{
 				token = strtok(NULL, " ");
-				if (!strncmp(str, "push", 4))
+				if (!strncmp(str, "push", op_len))
 				{
 					if (token == NULL)
 					{
 						error_status = 1;
 						operations[i].f(&top, line_num);
 					}
-					data = line_num * 10 + atoi(token);
-					operations[i].f(&top, data);
+					data = atoi(token);
+					operations[i].f(&top, line_num);
 				}
 				else
 				{

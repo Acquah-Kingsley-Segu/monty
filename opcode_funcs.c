@@ -12,12 +12,9 @@
 void push(list **top, unsigned int line_num)
 {
         list *node = malloc(sizeof(list));
-	int data;
 
         if (top == NULL || *top == NULL)
                 return;
-	data = line_num % 10;
-	line_num = (line_num - data) / 10;
 	if (error_status == 1)
 	{
 		printf("L%d: usage: push integer\n", line_num);
@@ -41,7 +38,7 @@ void pall(list **top, unsigned int line_num)
 
         if (top == NULL)
 	{
-		printf("L%d: usage: pass a top pointer\n", line_num / 10);
+		printf("L%d: usage: pass a top pointer\n", line_num);
                 exit(EXIT_FAILURE);
 	}
         if (trav == NULL)
@@ -63,7 +60,7 @@ void pint(list **top, unsigned int line_num)
 {
 	if (top == NULL || *top == NULL)
 	{
-		printf("L%u: can't pint, stack is empty\n", (line_num / 10));
+		printf("L%u: can't pint, stack is empty\n", line_num);
 		exit(EXIT_FAILURE);
 	}
 	printf("%d\n", (*top)->data);
@@ -79,7 +76,7 @@ void pop(list **top, unsigned int line_num)
 	list *trav;
 	if (top == NULL || *top == NULL)
 	{
-		printf("L%u: can't pop an empty stack\n", (line_num / 10));
+		printf("L%u: can't pop an empty stack\n", line_num);
 		exit(EXIT_FAILURE);
 	}
 	trav = *top;
@@ -107,7 +104,7 @@ void swap(list **top, unsigned int line_num)
 	}
 	if (temp < 2)
 	{
-		printf("L%u: can't swap, stack too short\n", (line_num / 10));
+		printf("L%u: can't swap, stack too short\n", line_num);
 		exit(EXIT_FAILURE);
 	}
 	temp = (*top)->data;
@@ -135,11 +132,11 @@ void add(list **top, unsigned int line_num)
 	}
 	if (size < 2)
 	{
-		printf("L%u: can't add, stack too short\n", (line_num / 10));
+		printf("L%u: can't add, stack too short\n", line_num);
 		exit(EXIT_FAILURE);
 	}
 	(*top)->prev->data = (*top)->prev->data + (*top)->data;
-	pop(&(*top), 1);
+	pop(&(*top), line_num);
 }
 
 /**
@@ -151,7 +148,7 @@ void nop(list **top, unsigned int line_num)
 {
 	if (top == NULL)
 		exit(EXIT_FAILURE);
-	exit((line_num - line_num + 1));
+	exit((line_num));
 }
 
 /**
@@ -174,11 +171,11 @@ void sub(list **top, unsigned int line_num)
 	}
 	if (size < 2)
 	{
-		printf("L%u: can't sub, stack too short\n", (line_num / 10));
+		printf("L%u: can't sub, stack too short\n", line_num);
 		exit(EXIT_FAILURE);
 	}
-	(*top)->prev->data -= (*top)->data;
-	pop(&(*top), 1);
+	(*top)->prev->data = (*top)->prev->data - (*top)->data;
+	pop(&(*top), line_num);
 }
 
 /**
@@ -206,11 +203,11 @@ void _div(list **top, unsigned int line_num)
 	}
 	if ((*top)->data == 0)
 	{
-		printf("L%u: division by zero", (line_num / 10));
+		printf("L%u: division by zero", line_num);
 		exit(EXIT_FAILURE);
 	}
 	(*top)->prev->data /= (*top)->data;
-	pop(&(*top), 1);
+	pop(&(*top), line_num);
 }
 
 /**
@@ -303,15 +300,16 @@ void pstr(list **top, unsigned int line_num)
 {
 	list *trav;
 
-	if (top == NULL || *top == NULL)
-		exit(EXIT_FAILURE);
+	if (top == NULL)
+		exit(line_num - line_num);
+	if (*top == NULL)
+		fputc('\n', stdout);
 	trav = *top;
 	while (trav != NULL)
 	{
-		if (trav->data == 0 || trav->data > 127)
+		if (trav->data <= 0 || trav->data > 127)
 		{
-			printf("L%u: can't pstr, value out of range\n", (line_num / 10));
-			exit(EXIT_FAILURE);
+			break;
 		}
 		fputc(trav->data, stdout);
 		trav = trav->prev;

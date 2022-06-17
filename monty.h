@@ -51,4 +51,5 @@ extern void rotr(list **top, unsigned int);
 
 extern inst operations[16]; /* Opcode --> function */
 extern int error_status; /* To check if an error took place */
+extern int data;
 #endif
